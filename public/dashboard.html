@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexaTop — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#050810;--surface:#0d1220;--surface2:#131929;--border:rgba(99,179,255,0.12);--accent:#3b82f6;--accent2:#06b6d4;--gold:#f59e0b;--text:#e2e8f0;--muted:#64748b;--success:#10b981;--danger:#ef4444;--warn:#f59e0b;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(59,130,246,0.1) 0%,transparent 70%);pointer-events:none;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(5,8,16,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px;}
+  .logo{font-family:'Rajdhani',sans-serif;font-size:1.5rem;font-weight:700;letter-spacing:2px;color:#fff;text-decoration:none;}
+  .logo span{color:var(--accent);}
+  .nav-right{display:flex;align-items:center;gap:10px;}
+  .nav-link{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;font-size:.875rem;transition:all .2s;}
+  .nav-link:hover{color:var(--text);background:var(--surface);}
+  .btn-sm{background:transparent;border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:8px;font-size:.8rem;cursor:pointer;font-family:inherit;transition:all .2s;}
+  .btn-sm:hover{border-color:var(--danger);color:var(--danger);}
+
+  .container{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:32px 24px 80px;}
+  .page-title{font-family:'Rajdhani',sans-serif;font-size:2rem;font-weight:700;margin-bottom:4px;}
+  .page-sub{color:var(--muted);font-size:.875rem;margin-bottom:32px;}
+
+  /* Stats grid */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px;}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 22px;position:relative;overflow:hidden;}
+  .stat-card::before{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:.07;}
+  .stat-card.blue::before{background:var(--accent);}
+  .stat-card.cyan::before{background:var(--accent2);}
+  .stat-card.gold::before{background:var(--gold);}
+  .stat-card.green::before{background:var(--success);}
+  .stat-label{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+  .stat-value{font-family:'Rajdhani',sans-serif;font-size:1.6rem;font-weight:700;}
+  .stat-value.gold{color:var(--gold);}
+  .stat-value.green{color:var(--success);}
+
+  /* Balance card */
+  .balance-card{background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(6,182,212,0.08));border:1px solid rgba(59,130,246,0.3);border-radius:20px;padding:28px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+  .balance-label{font-size:.85rem;color:var(--accent2);margin-bottom:6px;}
+  .balance-val{font-family:'Rajdhani',sans-serif;font-size:2.4rem;font-weight:700;color:#fff;}
+  .btn-deposit{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:12px;padding:12px 24px;font-size:.95rem;font-weight:700;font-family:'Rajdhani',sans-serif;letter-spacing:1px;cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s;}
+  .btn-deposit:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(59,130,246,0.4);}
+
+  /* Reseller badge */
+  .reseller-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:var(--gold);padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:600;margin-bottom:20px;}
+
+  /* Tabs */
+  .tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px;margin-bottom:20px;width:fit-content;}
+  .tab{padding:8px 20px;border-radius:9px;border:none;background:transparent;color:var(--muted);font-family:inherit;font-size:.875rem;font-weight:500;cursor:pointer;transition:all .2s;}
+  .tab.active{background:var(--surface2);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.3);}
+
+  /* Table / List */
+  .section-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+  .section-card-header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  .section-card-title{font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
+  .tx-list{padding:0;}
+  .tx-item{display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px solid var(--border);transition:background .15s;}
+  .tx-item:last-child{border-bottom:none;}
+  .tx-item:hover{background:var(--surface2);}
+  .tx-icon{width:40px;height:40px;border-radius:12px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+  .tx-info{flex:1;min-width:0;}
+  .tx-name{font-size:.875rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tx-sub{font-size:.75rem;color:var(--muted);margin-top:2px;}
+  .tx-right{text-align:right;flex-shrink:0;}
+  .tx-price{font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;color:var(--gold);}
+  .tx-status{font-size:.72rem;padding:2px 8px;border-radius:20px;margin-top:3px;display:inline-block;}
+  .tx-status.success{background:rgba(16,185,129,.15);color:var(--success);}
+  .tx-status.processing{background:rgba(59,130,246,.15);color:var(--accent);}
+  .tx-status.pending{background:rgba(245,158,11,.15);color:var(--warn);}
+  .tx-status.failed{background:rgba(239,68,68,.15);color:var(--danger);}
+  .empty{text-align:center;padding:48px 24px;color:var(--muted);}
+  .empty-icon{font-size:3rem;margin-bottom:12px;}
+
+  /* Deposit list */
+  .dep-item{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--border);}
+  .dep-item:last-child{border-bottom:none;}
+  .dep-amount{font-family:'Rajdhani',sans-serif;font-size:1.1rem;font-weight:700;color:var(--success);}
+  .dep-date{font-size:.75rem;color:var(--muted);margin-top:2px;}
+
+  /* Profile section */
+  .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .profile-item{background:var(--surface2);border-radius:12px;padding:14px 16px;}
+  .profile-item .lbl{font-size:.75rem;color:var(--muted);margin-bottom:4px;}
+  .profile-item .val{font-size:.9rem;font-weight:600;word-break:break-all;}
+  .api-key-box{background:var(--surface2);border:1px dashed var(--border);border-radius:12px;padding:14px 16px;margin-top:12px;}
+  .api-key-box .lbl{font-size:.75rem;color:var(--muted);margin-bottom:6px;}
+  .api-key-val{font-family:monospace;font-size:.85rem;word-break:break-all;color:var(--accent2);}
+  .copy-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:4px 10px;border-radius:6px;font-size:.75rem;cursor:pointer;font-family:inherit;margin-top:8px;transition:all .2s;}
+  .copy-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+  .skeleton{background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:10px;}
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+  .toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--surface2);border:1px solid var(--success);border-radius:12px;padding:12px 20px;font-size:.875rem;transform:translateX(120%);transition:transform .3s;}
+  .toast.show{transform:none;}
+
+  @media(max-width:600px){
+    .balance-card{flex-direction:column;align-items:flex-start;}
+    .profile-grid{grid-template-columns:1fr;}
+    .stats{grid-template-columns:1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">NEXA<span>TOP</span></a>
+  <div class="nav-right">
+    <a href="/" class="nav-link">🎮 Top Up</a>
+    <a href="/deposit" class="nav-link">+ Deposit</a>
+    <button class="btn-sm" onclick="logout()">Keluar</button>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-title">Dashboard</div>
+  <div class="page-sub" id="welcomeSub">Selamat datang kembali!</div>
+
+  <!-- Balance -->
+  <div class="balance-card">
+    <div>
+      <div class="balance-label">Saldo Aktif</div>
+      <div class="balance-val" id="balanceVal">Rp—</div>
+    </div>
+    <a href="/deposit" class="btn-deposit">+ Deposit Saldo</a>
+  </div>
+
+  <div id="resellerBadge" style="display:none">
+    <div class="reseller-badge">⭐ Reseller Aktif</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats" id="statsGrid">
+    <div class="stat-card blue">
+      <div class="stat-label">Total Transaksi</div>
+      <div class="stat-value" id="statTotal">—</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">Berhasil</div>
+      <div class="stat-value green" id="statSuccess">—</div>
+    </div>
+    <div class="stat-card gold">
+      <div class="stat-label">Total Belanja</div>
+      <div class="stat-value gold" id="statSpend">—</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('tx', this)">Riwayat Top Up</button>
+    <button class="tab" onclick="switchTab('dep', this)">Riwayat Deposit</button>
+    <button class="tab" onclick="switchTab('profile', this)">Profil</button>
+  </div>
+
+  <!-- Transaction tab -->
+  <div id="tabTx" class="section-card">
+    <div class="section-card-header">
+      <span class="section-card-title">Riwayat Transaksi</span>
+    </div>
+    <div class="tx-list" id="txList">
+      <div style="padding:20px">
+        <div class="skeleton" style="height:56px;margin-bottom:8px;"></div>
+        <div class="skeleton" style="height:56px;margin-bottom:8px;"></div>
+        <div class="skeleton" style="height:56px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deposit tab -->
+  <div id="tabDep" class="section-card" style="display:none">
+    <div class="section-card-header">
+      <span class="section-card-title">Riwayat Deposit</span>
+      <a href="/deposit" style="color:var(--accent);font-size:.85rem;text-decoration:none;">+ Deposit Baru</a>
+    </div>
+    <div id="depList">
+      <div class="empty"><div class="empty-icon">💳</div>Belum ada deposit</div>
+    </div>
+  </div>
+
+  <!-- Profile tab -->
+  <div id="tabProfile" class="section-card" style="display:none">
+    <div class="section-card-header">
+      <span class="section-card-title">Profil Akun</span>
+    </div>
+    <div style="padding:20px">
+      <div class="profile-grid" id="profileGrid">
+        <div class="skeleton" style="height:64px;"></div>
+        <div class="skeleton" style="height:64px;"></div>
+        <div class="skeleton" style="height:64px;"></div>
+        <div class="skeleton" style="height:64px;"></div>
+      </div>
+      <div id="apiKeySection" style="display:none">
+        <div class="api-key-box">
+          <div class="lbl">🔑 API Key Reseller</div>
+          <div class="api-key-val" id="apiKeyVal">—</div>
+          <button class="copy-btn" onclick="copyKey()">Salin API Key</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const token = localStorage.getItem('token');
+if (!token) location.href = '/login';
+
+let profileData = null;
+
+function formatRp(n) { return 'Rp' + Number(n).toLocaleString('id-ID'); }
+function formatDate(s) { return s ? new Date(s).toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—'; }
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tabTx').style.display    = tab==='tx'      ? 'block' : 'none';
+  document.getElementById('tabDep').style.display   = tab==='dep'     ? 'block' : 'none';
+  document.getElementById('tabProfile').style.display = tab==='profile' ? 'block' : 'none';
+}
+
+async function loadProfile() {
+  try {
+    const r = await fetch('/api/user/profile', { headers:{ Authorization:`Bearer ${token}` } });
+    const data = await r.json();
+    if (!data.success) { logout(); return; }
+    profileData = data.data;
+
+    // Update localStorage
+    localStorage.setItem('user', JSON.stringify(data.data));
+
+    document.getElementById('welcomeSub').textContent = `Halo, ${data.data.username}! 👋`;
+    document.getElementById('balanceVal').textContent = formatRp(data.data.balance || 0);
+
+    if (data.data.is_reseller) {
+      document.getElementById('resellerBadge').style.display = 'block';
+    }
+    if (data.data.reseller_api_key) {
+      document.getElementById('apiKeySection').style.display = 'block';
+      document.getElementById('apiKeyVal').textContent = data.data.reseller_api_key;
+    }
+
+    document.getElementById('profileGrid').innerHTML = `
+      <div class="profile-item"><div class="lbl">Username</div><div class="val">${data.data.username}</div></div>
+      <div class="profile-item"><div class="lbl">Email</div><div class="val">${data.data.email}</div></div>
+      <div class="profile-item"><div class="lbl">No. HP</div><div class="val">${data.data.phone || '—'}</div></div>
+      <div class="profile-item"><div class="lbl">Status</div><div class="val">${data.data.is_reseller ? '⭐ Reseller' : 'Member'}</div></div>
+      <div class="profile-item"><div class="lbl">Bergabung</div><div class="val">${formatDate(data.data.created_at)}</div></div>
+    `;
+  } catch { logout(); }
+}
+
+async function loadTransactions() {
+  try {
+    const r = await fetch('/api/order/history', { headers:{ Authorization:`Bearer ${token}` } });
+    const data = await r.json();
+    const txs = data.data || [];
+
+    // Stats
+    document.getElementById('statTotal').textContent = txs.length;
+    document.getElementById('statSuccess').textContent = txs.filter(t=>t.status==='success').length;
+    document.getElementById('statSpend').textContent = formatRp(txs.filter(t=>t.status==='success').reduce((s,t)=>s+(t.price||0),0));
+
+    if (!txs.length) {
+      document.getElementById('txList').innerHTML = `<div class="empty"><div class="empty-icon">🎮</div>Belum ada transaksi.<br><a href="/" style="color:var(--accent)">Mulai top up</a></div>`;
+      return;
+    }
+
+    document.getElementById('txList').innerHTML = txs.map(tx => `
+      <div class="tx-item">
+        <div class="tx-icon">🎮</div>
+        <div class="tx-info">
+          <div class="tx-name">${tx.product_name}</div>
+          <div class="tx-sub">ID: ${tx.target} · ${formatDate(tx.created_at)}</div>
+        </div>
+        <div class="tx-right">
+          <div class="tx-price">${formatRp(tx.price)}</div>
+          <span class="tx-status ${tx.status}">${tx.status}</span>
+        </div>
+      </div>
+    `).join('');
+  } catch {
+    document.getElementById('txList').innerHTML = '<div class="empty">Gagal memuat transaksi</div>';
+  }
+}
+
+async function loadDeposits() {
+  try {
+    const r = await fetch('/api/deposit/history', { headers:{ Authorization:`Bearer ${token}` } });
+    const data = await r.json();
+    const deps = data.data || [];
+
+    if (!deps.length) return;
+
+    document.getElementById('depList').innerHTML = deps.map(d => `
+      <div class="dep-item">
+        <div>
+          <div class="dep-amount">+${formatRp(d.amount)}</div>
+          <div class="dep-date">${formatDate(d.created_at)}</div>
+        </div>
+        <span class="tx-status ${d.status==='success'?'success':d.status==='pending'?'pending':'failed'}">${d.status}</span>
+      </div>
+    `).join('');
+  } catch {}
+}
+
+function copyKey() {
+  const key = document.getElementById('apiKeyVal').textContent;
+  navigator.clipboard.writeText(key).then(() => {
+    const t = document.getElementById('toast');
+    t.textContent = 'API Key disalin!'; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  });
+}
+
+function logout() { localStorage.removeItem('token'); localStorage.removeItem('user'); location.href = '/'; }
+
+loadProfile();
+loadTransactions();
+loadDeposits();
+</script>
+</body>
+</html>
