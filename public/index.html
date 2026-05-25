@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexaTop — Top Up Game Terpercaya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050810;
+    --surface: #0d1220;
+    --surface2: #131929;
+    --border: rgba(99,179,255,0.12);
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --gold: #f59e0b;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --success: #10b981;
+    --danger: #ef4444;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Space Grotesk',sans-serif; min-height:100vh; }
+
+  /* Background */
+  body::before {
+    content:'';
+    position:fixed; inset:0; z-index:0;
+    background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59,130,246,0.15) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 40% at 90% 80%, rgba(6,182,212,0.08) 0%, transparent 60%);
+    pointer-events:none;
+  }
+
+  /* Navbar */
+  nav {
+    position:sticky; top:0; z-index:100;
+    background:rgba(5,8,16,0.85); backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+    padding:0 24px;
+    display:flex; align-items:center; justify-content:space-between;
+    height:60px;
+  }
+  .logo { font-family:'Rajdhani',sans-serif; font-size:1.5rem; font-weight:700; letter-spacing:2px; color:#fff; }
+  .logo span { color:var(--accent); }
+  .nav-links { display:flex; align-items:center; gap:8px; }
+  .nav-link { color:var(--muted); text-decoration:none; padding:6px 14px; border-radius:8px; font-size:.875rem; font-weight:500; transition:all .2s; }
+  .nav-link:hover { color:var(--text); background:var(--surface); }
+  .nav-btn { background:var(--accent); color:#fff; padding:7px 16px; border-radius:8px; font-size:.875rem; font-weight:600; text-decoration:none; transition:all .2s; border:none; cursor:pointer; }
+  .nav-btn:hover { background:#2563eb; transform:translateY(-1px); }
+  .nav-btn.outline { background:transparent; border:1px solid var(--border); color:var(--text); }
+  .nav-btn.outline:hover { background:var(--surface); border-color:var(--accent); }
+  .user-info { display:none; align-items:center; gap:12px; }
+  .balance-badge { background:var(--surface2); border:1px solid var(--border); padding:5px 12px; border-radius:20px; font-size:.8rem; }
+  .balance-badge span { color:var(--gold); font-weight:600; }
+
+  /* Hero */
+  .hero { position:relative; z-index:1; text-align:center; padding:60px 24px 40px; }
+  .hero-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.3); border-radius:20px; padding:5px 14px; font-size:.8rem; color:var(--accent2); margin-bottom:20px; }
+  .hero h1 { font-family:'Rajdhani',sans-serif; font-size:clamp(2rem,5vw,3.5rem); font-weight:700; line-height:1.1; margin-bottom:12px; }
+  .hero h1 .highlight { background:linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .hero p { color:var(--muted); font-size:1rem; max-width:500px; margin:0 auto 32px; }
+
+  /* Search */
+  .search-wrap { max-width:420px; margin:0 auto; position:relative; }
+  .search-wrap input { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 16px 12px 44px; color:var(--text); font-size:.95rem; font-family:inherit; outline:none; transition:border-color .2s; }
+  .search-wrap input:focus { border-color:var(--accent); }
+  .search-wrap input::placeholder { color:var(--muted); }
+  .search-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted); }
+
+  /* Category tabs */
+  .tabs { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:24px auto; padding:0 24px; max-width:900px; }
+  .tab { padding:6px 16px; border-radius:20px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:.85rem; cursor:pointer; transition:all .2s; font-family:inherit; }
+  .tab.active, .tab:hover { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+  /* Game Grid */
+  .section { position:relative; z-index:1; padding:0 24px 80px; max-width:1200px; margin:0 auto; }
+  .section-title { font-family:'Rajdhani',sans-serif; font-size:1.2rem; font-weight:600; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:20px; }
+  .games-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:16px; }
+  .game-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden;
+    cursor:pointer; transition:all .25s; text-decoration:none; display:flex; flex-direction:column;
+    animation: fadeIn .4s ease both;
+  }
+  .game-card:hover { transform:translateY(-4px); border-color:rgba(59,130,246,0.4); box-shadow:0 8px 32px rgba(59,130,246,0.15); }
+  .game-card-img { width:100%; aspect-ratio:1; object-fit:cover; background:var(--surface2); }
+  .game-card-img-fallback { width:100%; aspect-ratio:1; background:linear-gradient(135deg,var(--surface2),var(--surface)); display:flex; align-items:center; justify-content:center; font-size:2.5rem; }
+  .game-card-body { padding:10px 12px 12px; }
+  .game-card-name { font-size:.85rem; font-weight:600; color:var(--text); line-height:1.3; }
+  .game-card-cat { font-size:.72rem; color:var(--muted); margin-top:2px; text-transform:capitalize; }
+
+  /* Loading skeleton */
+  .skeleton { background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:16px; }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  .skeleton-card { height:200px; }
+
+  /* Features strip */
+  .features { position:relative; z-index:1; background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:20px 24px; display:flex; justify-content:center; gap:40px; flex-wrap:wrap; margin-bottom:40px; }
+  .feature { display:flex; align-items:center; gap:8px; font-size:.85rem; color:var(--muted); }
+  .feature-icon { font-size:1.2rem; }
+  .feature strong { color:var(--text); }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+
+  /* Toast */
+  .toast { position:fixed; bottom:24px; right:24px; z-index:999; background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:12px 20px; font-size:.875rem; transform:translateX(120%); transition:transform .3s; max-width:300px; }
+  .toast.show { transform:none; }
+  .toast.success { border-color:var(--success); }
+  .toast.error { border-color:var(--danger); }
+
+  footer { position:relative; z-index:1; text-align:center; padding:24px; color:var(--muted); font-size:.8rem; border-top:1px solid var(--border); }
+  footer a { color:var(--accent); text-decoration:none; }
+
+  @media(max-width:600px) {
+    .games-grid { grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:12px; }
+    .features { gap:20px; }
+    nav { padding:0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">NEXA<span>TOP</span></div>
+  <div class="nav-links" id="navGuest">
+    <a href="/login" class="nav-link">Masuk</a>
+    <a href="/register" class="nav-btn">Daftar</a>
+  </div>
+  <div class="user-info" id="navUser">
+    <div class="balance-badge">Saldo: <span id="navBalance">Rp0</span></div>
+    <a href="/deposit" class="nav-link">+ Deposit</a>
+    <a href="/dashboard" class="nav-link">Dashboard</a>
+    <button class="nav-btn outline" onclick="logout()">Keluar</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">⚡ Top Up Instan & Aman</div>
+  <h1>Top Up Game <span class="highlight">Tercepat</span><br>& Terpercaya</h1>
+  <p>Ratusan game tersedia. Proses otomatis, harga terjangkau, saldo masuk instan.</p>
+  <div class="search-wrap">
+    <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Cari game..." oninput="filterGames()">
+  </div>
+</div>
+
+<div class="features">
+  <div class="feature"><span class="feature-icon">⚡</span><div><strong>Instan</strong> · Proses Otomatis</div></div>
+  <div class="feature"><span class="feature-icon">🔒</span><div><strong>Aman</strong> · SSL Encrypted</div></div>
+  <div class="feature"><span class="feature-icon">💳</span><div><strong>QRIS</strong> · Semua Bank</div></div>
+  <div class="feature"><span class="feature-icon">🎮</span><div><strong>100+</strong> Game Tersedia</div></div>
+</div>
+
+<div class="tabs" id="tabsWrap">
+  <button class="tab active" onclick="filterCategory('all', this)">Semua</button>
+</div>
+
+<div class="section">
+  <div class="section-title" id="sectionTitle">Pilih Game</div>
+  <div class="games-grid" id="gamesGrid">
+    <!-- skeletons -->
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+  </div>
+</div>
+
+<footer>
+  © 2024 NexaTop · <a href="/docs">API Docs</a> · <a href="/reseller">Jadi Reseller</a>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let allGames = [];
+let activeCategory = 'all';
+
+async function loadGames() {
+  try {
+    const r = await fetch('/api/games/list');
+    const data = await r.json();
+    if (!data.success) throw new Error();
+    allGames = data.data;
+    buildTabs();
+    renderGames(allGames);
+  } catch {
+    document.getElementById('gamesGrid').innerHTML = '<p style="color:var(--muted);text-align:center;grid-column:1/-1;padding:40px">Gagal memuat game. Coba refresh halaman.</p>';
+  }
+}
+
+function buildTabs() {
+  const cats = [...new Set(allGames.map(g => g.category))];
+  const wrap = document.getElementById('tabsWrap');
+  cats.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'tab';
+    btn.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+    btn.onclick = () => filterCategory(cat, btn);
+    wrap.appendChild(btn);
+  });
+}
+
+function filterCategory(cat, btn) {
+  activeCategory = cat;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  filterGames();
+}
+
+function filterGames() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  let filtered = allGames;
+  if (activeCategory !== 'all') filtered = filtered.filter(g => g.category === activeCategory);
+  if (q) filtered = filtered.filter(g => g.game_name.toLowerCase().includes(q));
+  renderGames(filtered);
+}
+
+const gameEmojis = { 'mobile-legends':'⚔️', 'free-fire':'🔥', 'pubg':'🎯', 'genshin-impact':'🌟', 'valorant':'💥' };
+
+function renderGames(games) {
+  const grid = document.getElementById('gamesGrid');
+  const title = document.getElementById('sectionTitle');
+  title.textContent = `${games.length} Game Tersedia`;
+  if (!games.length) { grid.innerHTML = '<p style="color:var(--muted);text-align:center;grid-column:1/-1;padding:40px">Tidak ada game ditemukan</p>'; return; }
+
+  grid.innerHTML = games.map((g, i) => `
+    <a class="game-card" href="/game/${g.game_slug}" style="animation-delay:${i*0.03}s">
+      ${g.icon_url
+        ? `<img class="game-card-img" src="${g.icon_url}" alt="${g.game_name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        : ''}
+      <div class="game-card-img-fallback" style="${g.icon_url?'display:none':''}">
+        ${gameEmojis[g.game_slug] || '🎮'}
+      </div>
+      <div class="game-card-body">
+        <div class="game-card-name">${g.game_name}</div>
+        <div class="game-card-cat">${g.category}</div>
+      </div>
+    </a>
+  `).join('');
+}
+
+// Auth state
+function checkAuth() {
+  const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+  if (token && user) {
+    document.getElementById('navGuest').style.display = 'none';
+    document.getElementById('navUser').style.display = 'flex';
+    document.getElementById('navBalance').textContent = formatRp(user.balance || 0);
+  }
+}
+function formatRp(n) { return 'Rp' + n.toLocaleString('id-ID'); }
+function logout() { localStorage.removeItem('token'); localStorage.removeItem('user'); location.href = '/'; }
+
+checkAuth();
+loadGames();
+</script>
+</body>
+</html>

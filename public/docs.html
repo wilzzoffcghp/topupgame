@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexaTop — API Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#050810;--surface:#0d1220;--surface2:#131929;--border:rgba(99,179,255,0.12);--accent:#3b82f6;--accent2:#06b6d4;--gold:#f59e0b;--text:#e2e8f0;--muted:#64748b;--success:#10b981;--danger:#ef4444;--warn:#f59e0b;--purple:#a855f7;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;display:flex;}
+  body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 60% 40% at 100% 0%,rgba(59,130,246,0.06) 0%,transparent 60%);pointer-events:none;}
+
+  /* Sidebar */
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--surface);border-right:1px solid var(--border);padding:0;overflow-y:auto;z-index:10;display:flex;flex-direction:column;}
+  .sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid var(--border);}
+  .logo{font-family:'Rajdhani',sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:2px;color:#fff;text-decoration:none;display:block;}
+  .logo span{color:var(--accent);}
+  .logo small{display:block;font-size:.65rem;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+  .sidebar-nav{padding:12px 0;flex:1;}
+  .nav-section{padding:8px 16px 4px;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);}
+  .nav-item{display:block;padding:8px 16px;font-size:.83rem;color:var(--muted);text-decoration:none;transition:all .15s;cursor:pointer;border-left:2px solid transparent;}
+  .nav-item:hover{color:var(--text);background:var(--surface2);}
+  .nav-item.active{color:var(--accent);border-left-color:var(--accent);background:rgba(59,130,246,.06);}
+  .method-badge{font-size:.65rem;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:6px;font-family:'JetBrains Mono',monospace;}
+  .get{background:rgba(16,185,129,.15);color:var(--success);}
+  .post{background:rgba(245,158,11,.15);color:var(--warn);}
+  .sidebar-footer{padding:16px;border-top:1px solid var(--border);}
+  .reseller-cta{background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(251,146,60,.08));border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:12px;text-align:center;}
+  .reseller-cta p{font-size:.75rem;color:var(--muted);margin-bottom:8px;}
+  .reseller-cta a{display:block;background:var(--gold);color:#111;border-radius:8px;padding:7px;font-size:.8rem;font-weight:700;text-decoration:none;font-family:'Rajdhani',sans-serif;}
+
+  /* Main */
+  .main{margin-left:240px;flex:1;padding:40px;max-width:calc(100% - 240px);position:relative;z-index:1;}
+
+  /* Header */
+  .doc-header{margin-bottom:48px;}
+  .doc-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);color:var(--accent2);padding:4px 12px;border-radius:20px;font-size:.75rem;margin-bottom:12px;}
+  .doc-title{font-family:'Rajdhani',sans-serif;font-size:2.5rem;font-weight:700;margin-bottom:8px;}
+  .doc-sub{color:var(--muted);font-size:.95rem;max-width:600px;line-height:1.6;}
+
+  /* Info box */
+  .info-box{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:12px;padding:16px 20px;margin-bottom:32px;font-size:.875rem;color:var(--accent2);}
+  .warn-box{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:12px;padding:16px 20px;margin-bottom:32px;font-size:.875rem;color:var(--warn);}
+
+  /* Endpoint sections */
+  .endpoint{margin-bottom:48px;scroll-margin-top:24px;}
+  .endpoint-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+  .method-tag{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;padding:5px 12px;border-radius:8px;}
+  .method-tag.GET{background:rgba(16,185,129,.15);color:var(--success);border:1px solid rgba(16,185,129,.3);}
+  .method-tag.POST{background:rgba(245,158,11,.15);color:var(--warn);border:1px solid rgba(245,158,11,.3);}
+  .endpoint-path{font-family:'JetBrains Mono',monospace;font-size:.95rem;color:var(--text);}
+  .endpoint-title{font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:6px;}
+  .endpoint-desc{color:var(--muted);font-size:.875rem;margin-bottom:20px;line-height:1.6;}
+
+  /* Params table */
+  .params-title{font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;}
+  table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:.85rem;}
+  th{text-align:left;padding:8px 12px;background:var(--surface2);color:var(--muted);font-weight:500;font-size:.78rem;border-bottom:1px solid var(--border);}
+  td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+  td:first-child{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--accent2);}
+  td:last-child{color:var(--muted);font-size:.82rem;}
+  .req{color:var(--danger);font-size:.7rem;margin-left:4px;}
+
+  /* Code blocks */
+  .code-block{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;}
+  .code-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);}
+  .code-tab{padding:8px 16px;font-size:.78rem;font-weight:500;color:var(--muted);cursor:pointer;border-right:1px solid var(--border);transition:all .15s;}
+  .code-tab.active{color:var(--text);background:var(--surface2);}
+  .code-copy{margin-left:auto;padding:8px 14px;font-size:.75rem;color:var(--muted);cursor:pointer;border-left:1px solid var(--border);transition:color .15s;}
+  .code-copy:hover{color:var(--accent);}
+  pre{padding:20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.6;}
+  .kw{color:#c792ea;} .str{color:#c3e88d;} .num{color:#f78c6c;} .prop{color:#82aaff;} .com{color:#546e7a;font-style:italic;} .fn{color:#82aaff;}
+
+  /* Divider */
+  .section-divider{height:1px;background:var(--border);margin:48px 0;}
+  .section-heading{font-family:'Rajdhani',sans-serif;font-size:1.8rem;font-weight:700;margin-bottom:8px;}
+  .section-desc{color:var(--muted);font-size:.875rem;margin-bottom:32px;}
+
+  /* Base URL box */
+  .base-url-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  .base-url-label{font-size:.78rem;color:var(--muted);margin-bottom:4px;}
+  .base-url-val{font-family:'JetBrains Mono',monospace;font-size:.95rem;color:var(--accent2);}
+  .copy-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 16px;border-radius:8px;font-size:.78rem;cursor:pointer;font-family:inherit;transition:all .2s;}
+  .copy-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+  @media(max-width:768px){
+    .sidebar{display:none;}
+    .main{margin-left:0;max-width:100%;padding:24px 16px;}
+  }
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <a href="/" class="logo">NEXA<span>TOP</span><small>API Documentation</small></a>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Mulai</div>
+    <a class="nav-item active" href="#intro" onclick="setActive(this)">Pengenalan</a>
+    <a class="nav-item" href="#auth" onclick="setActive(this)">Autentikasi</a>
+
+    <div class="nav-section">Game</div>
+    <a class="nav-item" href="#list-game" onclick="setActive(this)">List Game <span class="method-badge get">GET</span></a>
+    <a class="nav-item" href="#detail-game" onclick="setActive(this)">Detail Game <span class="method-badge get">GET</span></a>
+    <a class="nav-item" href="#product" onclick="setActive(this)">Cek Produk <span class="method-badge get">GET</span></a>
+
+    <div class="nav-section">Order</div>
+    <a class="nav-item" href="#order" onclick="setActive(this)">Buat Order <span class="method-badge post">POST</span></a>
+    <a class="nav-item" href="#status" onclick="setActive(this)">Cek Status <span class="method-badge post">POST</span></a>
+
+    <div class="nav-section">Deposit</div>
+    <a class="nav-item" href="#dep-create" onclick="setActive(this)">Buat Deposit <span class="method-badge post">POST</span></a>
+    <a class="nav-item" href="#dep-status" onclick="setActive(this)">Cek Deposit <span class="method-badge post">POST</span></a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="reseller-cta">
+      <p>Belum punya API Key?</p>
+      <a href="/reseller">Daftar Reseller →</a>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <!-- Intro -->
+  <div id="intro" class="doc-header endpoint">
+    <div class="doc-badge">📖 v1.0</div>
+    <div class="doc-title">API Documentation</div>
+    <p class="doc-sub">NexaTop API memungkinkan kamu mengintegrasikan layanan top up game ke platform kamu sendiri. Semua harga sudah termasuk markup Rp1.000 per transaksi.</p>
+
+    <div class="info-box" style="margin-top:20px">
+      ℹ️ API ini hanya tersedia untuk <strong>Reseller</strong> terdaftar. <a href="/reseller" style="color:var(--accent)">Daftar sekarang</a> dengan biaya Rp15.000 permanen.
+    </div>
+
+    <div class="base-url-box">
+      <div>
+        <div class="base-url-label">Base URL</div>
+        <div class="base-url-val" id="baseUrl">https://yourdomain.vercel.app/api/v1</div>
+      </div>
+      <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('baseUrl').textContent).then(()=>alert('Disalin!'))">Salin</button>
+    </div>
+  </div>
+
+  <!-- Auth -->
+  <div id="auth" class="endpoint">
+    <div class="endpoint-title">Autentikasi</div>
+    <p class="endpoint-desc">Semua request harus menyertakan API Key di header <code style="color:var(--accent2);font-family:'JetBrains Mono',monospace">X-Api-Key</code>. API Key didapatkan setelah mendaftar sebagai reseller.</p>
+    <div class="warn-box">⚠️ Jangan bagikan API Key kamu kepada siapapun. Simpan dengan aman.</div>
+    <div class="code-block">
+      <div class="code-tabs">
+        <div class="code-tab active">Header</div>
+        <div class="code-copy" onclick="copyCode(this)">Salin</div>
+      </div>
+      <pre><span class="prop">X-Api-Key</span>: <span class="str">rsl_your_api_key_here</span>
+<span class="prop">Content-Type</span>: <span class="str">application/json</span></pre>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+  <div class="section-heading">🎮 Game</div>
+
+  <!-- List Game -->
+  <div id="list-game" class="endpoint">
+    <div class="endpoint-header">
+      <span class="method-tag GET">GET</span>
+      <code class="endpoint-path">/game/list</code>
+    </div>
+    <div class="endpoint-title">List Game</div>
+    <p class="endpoint-desc">Mendapatkan semua game yang tersedia beserta icon dan kategorinya.</p>
+    <div class="code-block">
+      <div class="code-tabs">
+        <div class="code-tab active">JavaScript</div>
+        <div class="code-copy" onclick="copyCode(this)">Salin</div>
+      </div>
+      <pre><span class="kw">const</span> response = <span class="kw">await</span> fetch(<span class="str">'https://yourdomain.vercel.app/api/v1/game/list'</span>, {
+  headers: { <span class="str">'X-Api-Key'</span>: <span class="str">'rsl_your_api_key'</span> }
+});
+<span class="kw">const</span> data = <span class="kw">await</span> response.json();</pre>
+    </div>
+    <div class="params-title">Contoh Response</div>
+    <div class="code-block">
+      <div class="code-tabs"><div class="code-tab active">JSON</div><div class="code-copy" onclick="copyCode(this)">Salin</div></div>
+      <pre>{
+  <span class="prop">"success"</span>: <span class="kw">true</span>,
+  <span class="prop">"data"</span>: [
+    {
+      <span class="prop">"game_name"</span>: <span class="str">"Mobile Legends"</span>,
+      <span class="prop">"game_slug"</span>: <span class="str">"mobile-legends"</span>,
+      <span class="prop">"category"</span>: <span class="str">"game"</span>,
+      <span class="prop">"icon_url"</span>: <span class="str">"https://cdn.example.com/mobile-legends"</span>
+    }
+  ]
+}</pre>
+    </div>
+  </div>
+
+  <!-- Detail Game -->
+  <div id="detail-game" class="endpoint">
+    <div class="endpoint-header">
+      <span class="method-tag GET">GET</span>
+      <code class="endpoint-path">/game/:slug/detail</code>
+    </div>
+    <div class="endpoint-title">Detail Game & Produk</div>
+    <p class="endpoint-desc">Mendapatkan daftar produk/nominal yang tersedia untuk game tertentu. Harga sudah termasuk markup Rp1.000.</p>
+    <div class="params-title">Path Parameters</div>
+    <table>
+      <tr><th>Parameter</th><th>Tipe</th><th>Keterangan</th></tr>
+      <tr><td>slug<span class="req">*</span></td><td>string</td><td>Slug game dari endpoint list (contoh: mobile-legends)</td></tr>
+    </table>
+    <div class="code-block">
+      <div class="code-tabs"><div class="code-tab active">JavaScript</div><div class="code-copy" onclick="copyCode(this)">Salin</div></div>
+      <pre><span class="kw">const</span> response = <span class="kw">await</span> fetch(<span class="str">'https://yourdomain.vercel.app/api/v1/game/mobile-legends/detail'</span>, {
+  headers: { <span class="str">'X-Api-Key'</span>: <span class="str">'rsl_your_api_key'</span> }
+});
+<span class="kw">const</span> data = <span class="kw">await</span> response.json();</pre>
+    </div>
+    <div class="params-title">Contoh Response</div>
+    <div class="code-block">
+      <div class="code-tabs"><div class="code-tab active">JSON</div><div class="code-copy" onclick="copyCode(this)">Salin</div></div>
+      <pre>{
+  <span class="prop">"success"</span>: <span class="kw">true</span>,
+  <span class="prop">"data"</span>: {
+    <span class="prop">"game_name"</span>: <span class="str">"Mobile Legends"</span>,
+    <span class="prop">"game_slug"</span>: <span class="str">"mobile-legends"</span>,
+    <span class="prop">"products"</span>: [
+      {
+        <span class="prop">"product_code"</span>: <span class="str">"ML1048"</span>,
+        <span class="prop">"product_name"</span>: <span class="str">"Mobile Legends 1048 Diamonds"</span>,
+        <span class="prop">"price"</span>: <span class="num">196000</span>,
+        <span class="prop">"description"</span>: <span class="str">"Top Up Diamond Mobile Legends Instan"</span>
+      }
+    ]
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- Product -->
+  <div id="product" class="endpoint">
+    <div class="endpoint-header">
+      <span class="method-tag GET">GET</span>
+      <code class="endpoint-path">/game/:slug/product/:code</code>
+    </div>
+    <div class="endpoint-title">Cek Produk</div>
+    <p class="endpoint-desc">Mengecek ketersediaan dan harga produk tertentu sebelum melakukan order.</p>
+    <div class="code-block">
+      <div class="code-tabs"><div class="code-tab active">JavaScript</div><div class="code-copy" onclick="copyCode(this)">Salin</div></div>
+      <pre><span class="kw">const</span> response = <span class="kw">await</span> fetch(
+  <span class="str">'https://yourdomain.vercel.app/api/v1/game/mobile-legends/product/ML1048'</span>,
+  { headers: { <span class="str">'X-Api-Key'</span>: <span class="str">'rsl_your_api_key'</span> } }
+);</pre>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+  <div class="section-heading">📦 Order</div>
+
+  <!-- Order -->
+  <div id="order" class="endpoint">
+    <div class="endpoint-header">
+      <span class="method-tag POST">POST</span>
+      <code class="endpoint-path">/game/order</code>
+    </div>
+    <div class="endpoint-title">Buat Order</div>
+    <p class="endpoint-desc">Melakukan top up untuk game tertentu. Sertakan <code style="color:var(--accent2);font-family:'JetBrains Mono',monospace">target_zone</code> hanya jika game memerlukan Zone ID (contoh: Mobile Legends).</p>
+    <div class="params-title">Request Body</div>
+    <table>
+      <tr><th>Field</th><th>Tipe</th><th>Keterangan</th></tr>
+      <tr><td>product_code<span class="req">*</span></td><td>string</td><td>Kode produk dari endpoint detail game</td></tr>
+      <tr><td>target<span class="req">*</span></td><td>string</td><td>User ID / akun tujuan top up</td></tr>
+      <tr><td>target_zone</td><td>string</td><td>Zone ID (opsional, hanya untuk game tertentu)</td></tr>
+    </table>
+    <div class="code-block">
+      <div class="code-tabs"><div class="code-tab active">JavaScript</div><div class="code-copy" onclick="copyCode(this)">Salin</div></div>
+      <pre><span class="kw">const</span> response = <span class="kw">await</span> fetch(<span class="str">'https://yourdomain.vercel.app/api/v1/game/order'</span>, {
+  method: <span class="str">'POST'</span>,
+  headers: {
+    <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>,
+    <span class="str">'X-Api-Key'</span>: <span class="str">'rsl_your_api_key'</span>
+  },
+  body: JSON.stringify({
+    <span class="prop">product_code</span>: <span class="str">"ML1048"</span>,
+    <span class="prop">target</span>: <span class="str">"136216325"</span>,
+    <span class="prop">target_zone</span>: <span class="str">"2685"</span> <span class="com">// hapus jika tidak perlu zone</span>
+  })
+});</pre>
+    </div>
+    <div class="params-title">Contoh Response</div>
+    <div class="code-block">
+      <div class="code-tabs"><div class="code-tab active">JSON</div><div class="code-copy" onclick="copyCode(this)">Salin</div></div>
+      <pre>{
+  <span class="prop">"success"</span>: <span class="kw">true</span>,
+  <span class="prop">"message"</span>: <span class="str">"Transaksi berhasil diterima dan diproses."</span>,
+  <span class="prop">"data"</span>: {
+    <span class="prop">"order_id"</span>: <span class="str">"ZXT-1779607267-101"</span>,
+    <span class="prop">"product_name"</span>: <span class="str">"Mobile Legends - 1048 Diamonds"</span>,
+    <span class="prop">"target"</span>: <span class="str">"136216325"</span>,
+    <span class="prop">"price"</span>: <span class="num">196000</span>,
+    <span class="prop">"status"</span>: <span class="str">"processing"</span>
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- Status -->
+  <div id="status" class="endpoint">
+    <div class="endpoint-header">
+      <span class="method-tag POST">POST</span>
+      <code class="endpoint-path">/game/status</code>
+    </div>
+    <div class="endpoint-title">Cek Status Order</div>
+    <p class="endpoint-desc">Mengecek status transaksi berdasarkan Order ID. Status bisa: <code style="color:var(--success)">success</code>, <code style="color:var(--accent)">processing</code>, atau <code style="color:var(--danger)">failed</code>.</p>
+    <div class="code-block">
+      <div class="code-tabs"><div class="code-tab active">JavaScript</div><div class="code-copy" onclick="copyCode(this)">Salin</div></div>
+      <pre><span class="kw">const</span> response = <span class="kw">await</span> fetch(<span class="str">'https://yourdomain.vercel.app/api/v1/game/status'</span>, {
+  method: <span class="str">'POST'</span>,
+  headers: {
+    <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>,
+    <span class="str">'X-Api-Key'</span>: <span class="str">'rsl_your_api_key'</span>
+  },
+  body: JSON.stringify({ <span class="prop">trx_ref</span>: <span class="str">"ZXT-1779607267-101"</span> })
+});</pre>
+    </div>
+    <div class="params-title">Contoh Response</div>
+    <div class="code-block">
+      <div class="code-tabs"><div class="code-tab active">JSON</div><div class="code-copy" onclick="copyCode(this)">Salin</div></div>
+      <pre>{
+  <span class="prop">"success"</span>: <span class="kw">true</span>,
+  <span class="prop">"data"</span>: {
+    <span class="prop">"trx_ref"</span>: <span class="str">"ZXT-1779607267-101"</span>,
+    <span class="prop">"product_name"</span>: <span class="str">"Mobile Legends - 1048 Diamonds"</span>,
+    <span class="prop">"price"</span>: <span class="num">196000</span>,
+    <span class="prop">"status"</span>: <span class="str">"success"</span>,
+    <span class="prop">"sn"</span>: <span class="str">"9812492194821"</span>,
+    <span class="prop">"completed_at"</span>: <span class="str">"2024-01-15 11:30:15"</span>
+  }
+}</pre>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+  <div class="section-heading">💳 Deposit</div>
+
+  <!-- Deposit Create -->
+  <div id="dep-create" class="endpoint">
+    <div class="endpoint-header">
+      <span class="method-tag POST">POST</span>
+      <code class="endpoint-path">/deposit/create</code>
+    </div>
+    <div class="endpoint-title">Buat Deposit QRIS</div>
+    <p class="endpoint-desc">Membuat permintaan deposit saldo via QRIS. Minimal Rp10.000.</p>
+    <div class="params-title">Request Body</div>
+    <table>
+      <tr><th>Field</th><th>Tipe</th><th>Keterangan</th></tr>
+      <tr><td>amount<span class="req">*</span></td><td>integer</td><td>Jumlah nominal deposit dalam Rupiah (min: 10000)</td></tr>
+    </table>
+    <div class="code-block">
+      <div class="code-tabs"><div class="code-tab active">JavaScript</div><div class="code-copy" onclick="copyCode(this)">Salin</div></div>
+      <pre><span class="kw">const</span> response = <span class="kw">await</span> fetch(<span class="str">'https://yourdomain.vercel.app/api/v1/deposit/create'</span>, {
+  method: <span class="str">'POST'</span>,
+  headers: {
+    <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>,
+    <span class="str">'X-Api-Key'</span>: <span class="str">'rsl_your_api_key'</span>
+  },
+  body: JSON.stringify({ <span class="prop">amount</span>: <span class="num">50000</span> })
+});</pre>
+    </div>
+    <div class="params-title">Contoh Response</div>
+    <div class="code-block">
+      <div class="code-tabs"><div class="code-tab active">JSON</div><div class="code-copy" onclick="copyCode(this)">Salin</div></div>
+      <pre>{
+  <span class="prop">"success"</span>: <span class="kw">true</span>,
+  <span class="prop">"deposit"</span>: {
+    <span class="prop">"id"</span>: <span class="str">"DP-1002"</span>,
+    <span class="prop">"total_payment"</span>: <span class="num">50000</span>,
+    <span class="prop">"qr_image"</span>: <span class="str">"https://link-to-qris.png"</span>,
+    <span class="prop">"status"</span>: <span class="str">"pending"</span>
+  }
+}</pre>
+    </div>
+  </div>
+
+  <!-- Deposit Status -->
+  <div id="dep-status" class="endpoint">
+    <div class="endpoint-header">
+      <span class="method-tag POST">POST</span>
+      <code class="endpoint-path">/deposit/status</code>
+    </div>
+    <div class="endpoint-title">Cek Status Deposit</div>
+    <p class="endpoint-desc">Mengecek apakah deposit sudah dibayar. Lakukan polling setiap 5–10 detik hingga status <code style="color:var(--success)">success</code>.</p>
+    <div class="code-block">
+      <div class="code-tabs"><div class="code-tab active">JavaScript</div><div class="code-copy" onclick="copyCode(this)">Salin</div></div>
+      <pre><span class="kw">const</span> response = <span class="kw">await</span> fetch(<span class="str">'https://yourdomain.vercel.app/api/v1/deposit/status'</span>, {
+  method: <span class="str">'POST'</span>,
+  headers: {
+    <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>,
+    <span class="str">'X-Api-Key'</span>: <span class="str">'rsl_your_api_key'</span>
+  },
+  body: JSON.stringify({ <span class="prop">deposit_id</span>: <span class="str">"DP-1002"</span> })
+});</pre>
+    </div>
+    <div class="params-title">Contoh Response</div>
+    <div class="code-block">
+      <div class="code-tabs"><div class="code-tab active">JSON</div><div class="code-copy" onclick="copyCode(this)">Salin</div></div>
+      <pre>{
+  <span class="prop">"success"</span>: <span class="kw">true</span>,
+  <span class="prop">"status"</span>: <span class="str">"success"</span>,
+  <span class="prop">"message"</span>: <span class="str">"Pembayaran diverifikasi"</span>
+}</pre>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function setActive(el) {
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'Tersalin!';
+    setTimeout(() => btn.textContent = 'Salin', 2000);
+  });
+}
+// Update base URL dynamically
+document.getElementById('baseUrl').textContent = location.origin + '/api/v1';
+
+// Sidebar scroll spy
+const sections = document.querySelectorAll('.endpoint');
+const navItems = document.querySelectorAll('.nav-item');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+  navItems.forEach(i => {
+    i.classList.toggle('active', i.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+</body>
+</html>

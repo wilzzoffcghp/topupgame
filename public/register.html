@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexaTop — Daftar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#050810;--surface:#0d1220;--surface2:#131929;--border:rgba(99,179,255,0.12);--accent:#3b82f6;--accent2:#06b6d4;--gold:#f59e0b;--text:#e2e8f0;--muted:#64748b;--success:#10b981;--danger:#ef4444;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(59,130,246,0.12) 0%,transparent 70%);pointer-events:none;}
+  .brand{font-family:'Rajdhani',sans-serif;font-size:2rem;font-weight:700;letter-spacing:3px;margin-bottom:32px;text-align:center;}
+  .brand span{color:var(--accent);}
+  .brand small{display:block;font-size:.75rem;font-weight:400;letter-spacing:1px;color:var(--muted);margin-top:4px;}
+  .card{position:relative;z-index:1;background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:36px 32px;width:100%;max-width:420px;}
+  h1{font-family:'Rajdhani',sans-serif;font-size:1.6rem;font-weight:700;margin-bottom:4px;}
+  .sub{color:var(--muted);font-size:.875rem;margin-bottom:28px;}
+  .form-group{margin-bottom:16px;}
+  label{display:block;font-size:.8rem;font-weight:500;color:var(--muted);margin-bottom:6px;}
+  input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;color:var(--text);font-family:inherit;font-size:.95rem;outline:none;transition:border-color .2s;}
+  input:focus{border-color:var(--accent);}
+  input::placeholder{color:var(--muted);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .btn{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:12px;padding:14px;font-size:1rem;font-weight:700;font-family:'Rajdhani',sans-serif;letter-spacing:1.5px;cursor:pointer;transition:all .2s;margin-top:8px;}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(59,130,246,0.4);}
+  .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+  .divider{text-align:center;color:var(--muted);font-size:.8rem;margin:20px 0;position:relative;}
+  .divider::before,.divider::after{content:'';position:absolute;top:50%;width:calc(50% - 20px);height:1px;background:var(--border);}
+  .divider::before{left:0;} .divider::after{right:0;}
+  .link-text{text-align:center;color:var(--muted);font-size:.875rem;}
+  .link-text a{color:var(--accent);text-decoration:none;font-weight:600;}
+  .error-msg{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--danger);border-radius:10px;padding:10px 14px;font-size:.85rem;margin-bottom:16px;display:none;}
+  .error-msg.show{display:block;}
+  .success-msg{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:var(--success);border-radius:10px;padding:10px 14px;font-size:.85rem;margin-bottom:16px;display:none;}
+  .success-msg.show{display:block;}
+  .terms{font-size:.78rem;color:var(--muted);text-align:center;margin-top:16px;}
+  .terms a{color:var(--accent);text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="brand">NEXA<span>TOP</span><small>Top Up Game Terpercaya</small></div>
+<div class="card">
+  <h1>Buat Akun</h1>
+  <p class="sub">Daftar gratis dan mulai top up sekarang</p>
+
+  <div class="error-msg" id="errMsg"></div>
+  <div class="success-msg" id="okMsg"></div>
+
+  <div class="row2">
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="username" placeholder="username" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>No. HP (opsional)</label>
+      <input type="text" id="phone" placeholder="08xx">
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" id="email" placeholder="nama@email.com" autocomplete="email">
+  </div>
+  <div class="form-group">
+    <label>Password</label>
+    <input type="password" id="password" placeholder="Min. 6 karakter" autocomplete="new-password">
+  </div>
+  <div class="form-group">
+    <label>Konfirmasi Password</label>
+    <input type="password" id="confirm" placeholder="Ulangi password" autocomplete="new-password" onkeypress="if(event.key==='Enter')register()">
+  </div>
+
+  <button class="btn" id="regBtn" onclick="register()">DAFTAR SEKARANG</button>
+
+  <div class="divider">atau</div>
+  <div class="link-text">Sudah punya akun? <a href="/login">Masuk</a></div>
+  <p class="terms">Dengan mendaftar kamu menyetujui <a href="#">Syarat & Ketentuan</a> kami</p>
+</div>
+
+<script>
+if (localStorage.getItem('token')) location.href = '/dashboard';
+
+function showErr(msg) {
+  const el = document.getElementById('errMsg');
+  el.textContent = msg; el.classList.add('show');
+  document.getElementById('okMsg').classList.remove('show');
+}
+function showOk(msg) {
+  const el = document.getElementById('okMsg');
+  el.textContent = msg; el.classList.add('show');
+  document.getElementById('errMsg').classList.remove('show');
+}
+
+async function register() {
+  const username = document.getElementById('username').value.trim();
+  const email    = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const confirm  = document.getElementById('confirm').value;
+  const phone    = document.getElementById('phone').value.trim();
+  const btn      = document.getElementById('regBtn');
+
+  if (!username || !email || !password) { showErr('Username, email, dan password wajib diisi'); return; }
+  if (password.length < 6) { showErr('Password minimal 6 karakter'); return; }
+  if (password !== confirm) { showErr('Konfirmasi password tidak cocok'); return; }
+
+  btn.disabled = true; btn.textContent = 'Mendaftarkan...';
+
+  try {
+    const r = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, email, password, phone })
+    });
+    const data = await r.json();
+
+    if (!data.success) { showErr(data.message); btn.disabled=false; btn.textContent='DAFTAR SEKARANG'; return; }
+
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+
+    showOk('Registrasi berhasil! Mengalihkan...');
+    setTimeout(() => location.href = '/dashboard', 1200);
+  } catch {
+    showErr('Terjadi kesalahan. Coba lagi.');
+    btn.disabled=false; btn.textContent='DAFTAR SEKARANG';
+  }
+}
+</script>
+</body>
+</html>

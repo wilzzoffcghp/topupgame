@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexaTop — Konfirmasi Order</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#050810;--surface:#0d1220;--surface2:#131929;--border:rgba(99,179,255,0.12);--accent:#3b82f6;--accent2:#06b6d4;--gold:#f59e0b;--text:#e2e8f0;--muted:#64748b;--success:#10b981;--danger:#ef4444;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;}
+  body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(59,130,246,0.1) 0%,transparent 70%);pointer-events:none;}
+  nav{position:sticky;top:0;z-index:100;background:rgba(5,8,16,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px;}
+  .logo{font-family:'Rajdhani',sans-serif;font-size:1.5rem;font-weight:700;letter-spacing:2px;color:#fff;text-decoration:none;}
+  .logo span{color:var(--accent);}
+  .balance-badge{background:var(--surface2);border:1px solid var(--border);padding:5px 12px;border-radius:20px;font-size:.8rem;}
+  .balance-badge span{color:var(--gold);font-weight:600;}
+
+  .container{position:relative;z-index:1;max-width:500px;margin:0 auto;padding:32px 24px 80px;}
+  .back-btn{display:inline-flex;align-items:center;gap:8px;color:var(--muted);text-decoration:none;font-size:.875rem;margin-bottom:28px;transition:color .2s;}
+  .back-btn:hover{color:var(--text);}
+  h1{font-family:'Rajdhani',sans-serif;font-size:1.8rem;font-weight:700;margin-bottom:4px;}
+  .subtitle{color:var(--muted);font-size:.875rem;margin-bottom:28px;}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:16px;}
+  .card-title{font-family:'Rajdhani',sans-serif;font-size:.9rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:16px;}
+
+  .row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+  .row:last-child{border-bottom:none;}
+  .row .label{color:var(--muted);font-size:.875rem;}
+  .row .val{font-weight:600;font-size:.875rem;text-align:right;}
+  .row.total .label{color:var(--text);font-weight:600;}
+  .row.total .val{color:var(--gold);font-family:'Rajdhani',sans-serif;font-size:1.3rem;font-weight:700;}
+
+  /* Balance check */
+  .balance-status{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;font-size:.875rem;margin-top:4px;}
+  .balance-status.ok{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:var(--success);}
+  .balance-status.low{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--danger);}
+
+  /* Buttons */
+  .btn-primary{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:14px;padding:15px;font-size:1rem;font-weight:700;font-family:'Rajdhani',sans-serif;letter-spacing:1.5px;cursor:pointer;transition:all .2s;margin-top:8px;}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(59,130,246,0.4);}
+  .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+  .btn-secondary{width:100%;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:14px;padding:14px;font-size:.95rem;font-weight:600;font-family:inherit;cursor:pointer;transition:all .2s;margin-top:8px;text-decoration:none;display:block;text-align:center;}
+  .btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+
+  /* Success state */
+  .success-wrap{text-align:center;padding:40px 20px;}
+  .success-icon{font-size:4rem;margin-bottom:16px;}
+  .success-title{font-family:'Rajdhani',sans-serif;font-size:2rem;font-weight:700;color:var(--success);margin-bottom:8px;}
+  .success-sub{color:var(--muted);font-size:.9rem;margin-bottom:24px;}
+  .sn-box{background:var(--surface2);border:1px dashed var(--border);border-radius:12px;padding:16px;font-family:monospace;font-size:.9rem;margin-bottom:24px;word-break:break-all;}
+
+  /* Processing */
+  .processing-wrap{text-align:center;padding:32px 0;}
+  .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:.875rem;transform:translateX(120%);transition:transform .3s;max-width:280px;}
+  .toast.show{transform:none;}
+  .toast.error{border-color:var(--danger);color:var(--danger);}
+  .toast.success{border-color:var(--success);color:var(--success);}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">NEXA<span>TOP</span></a>
+  <div class="balance-badge">Saldo: <span id="navBalance">Rp0</span></div>
+</nav>
+
+<div class="container">
+  <a href="javascript:history.back()" class="back-btn">← Kembali</a>
+  <h1>Konfirmasi Order</h1>
+  <p class="subtitle">Periksa detail order sebelum melanjutkan</p>
+
+  <div id="mainContent">
+    <!-- Order detail -->
+    <div class="card">
+      <div class="card-title">📋 Detail Order</div>
+      <div class="row"><span class="label">Produk</span><span class="val" id="oProduct">—</span></div>
+      <div class="row"><span class="label">Target ID</span><span class="val" id="oTarget">—</span></div>
+      <div id="oZoneRow" class="row" style="display:none"><span class="label">Zone ID</span><span class="val" id="oZone">—</span></div>
+      <div class="row total"><span class="label">Total Pembayaran</span><span class="val" id="oPrice">—</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💰 Saldo Kamu</div>
+      <div class="row"><span class="label">Saldo Tersedia</span><span class="val" id="oBalance">—</span></div>
+      <div class="row"><span class="label">Saldo Setelah Order</span><span class="val" id="oAfter">—</span></div>
+      <div id="balanceStatus"></div>
+    </div>
+
+    <button class="btn-primary" id="btnOrder" onclick="placeOrder()">BAYAR & ORDER SEKARANG</button>
+    <a href="/deposit" class="btn-secondary" id="btnDeposit" style="display:none">+ Tambah Saldo</a>
+    <a href="javascript:history.back()" class="btn-secondary">Batal</a>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const slug = params.get('slug');
+const code = params.get('code');
+const target = params.get('target');
+const zone = params.get('zone');
+const price = parseInt(params.get('price') || '0');
+const name = params.get('name') || '';
+
+const user = JSON.parse(localStorage.getItem('user') || 'null');
+const token = localStorage.getItem('token');
+
+if (!token || !user) location.href = '/login';
+
+function formatRp(n) { return 'Rp' + Number(n).toLocaleString('id-ID'); }
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 4000);
+}
+
+function init() {
+  document.getElementById('oProduct').textContent = name;
+  document.getElementById('oTarget').textContent = target;
+  document.getElementById('oPrice').textContent = formatRp(price);
+
+  if (zone) {
+    document.getElementById('oZoneRow').style.display = 'flex';
+    document.getElementById('oZone').textContent = zone;
+  }
+
+  const balance = user.balance || 0;
+  document.getElementById('navBalance').textContent = formatRp(balance);
+  document.getElementById('oBalance').textContent = formatRp(balance);
+
+  const after = balance - price;
+  document.getElementById('oAfter').textContent = formatRp(after);
+
+  const statusEl = document.getElementById('balanceStatus');
+  if (after >= 0) {
+    statusEl.innerHTML = `<div class="balance-status ok">✓ Saldo mencukupi</div>`;
+    document.getElementById('btnOrder').disabled = false;
+  } else {
+    statusEl.innerHTML = `<div class="balance-status low">⚠ Saldo tidak cukup. Kekurangan ${formatRp(Math.abs(after))}</div>`;
+    document.getElementById('btnOrder').disabled = true;
+    document.getElementById('btnDeposit').style.display = 'block';
+  }
+}
+
+async function placeOrder() {
+  const btn = document.getElementById('btnOrder');
+  btn.disabled = true;
+  btn.textContent = 'Memproses...';
+
+  try {
+    const body = { product_code: code, target, slug };
+    if (zone) body.target_zone = zone;
+
+    const r = await fetch('/api/order/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify(body)
+    });
+    const data = await r.json();
+
+    if (!data.success) {
+      showToast(data.message || 'Order gagal', 'error');
+      btn.disabled = false;
+      btn.textContent = 'BAYAR & ORDER SEKARANG';
+      return;
+    }
+
+    // Update local user balance
+    const newBalance = (user.balance || 0) - price;
+    user.balance = newBalance;
+    localStorage.setItem('user', JSON.stringify(user));
+
+    // Show processing / polling status
+    showProcessing(data.data);
+
+  } catch (e) {
+    showToast('Terjadi kesalahan. Coba lagi.', 'error');
+    btn.disabled = false;
+    btn.textContent = 'BAYAR & ORDER SEKARANG';
+  }
+}
+
+function showProcessing(order) {
+  const content = document.getElementById('mainContent');
+  content.innerHTML = `
+    <div class="card">
+      <div class="processing-wrap">
+        <div class="spinner"></div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:8px">Memproses Order</div>
+        <div style="color:var(--muted);font-size:.875rem;margin-bottom:20px">Order ID: ${order.order_id}</div>
+        <div id="statusText" style="color:var(--muted);font-size:.875rem">Menunggu konfirmasi dari server...</div>
+      </div>
+    </div>
+  `;
+
+  // Poll status
+  pollStatus(order.order_id, 0);
+}
+
+async function pollStatus(orderId, attempt) {
+  if (attempt > 20) {
+    document.getElementById('statusText').textContent = 'Cek riwayat transaksi untuk update terbaru.';
+    return;
+  }
+
+  try {
+    await new Promise(r => setTimeout(r, 3000));
+    const res = await fetch('/api/order/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ trx_ref: orderId })
+    });
+    const data = await res.json();
+    if (!data.success) { pollStatus(orderId, attempt + 1); return; }
+
+    const status = data.data.status;
+    if (status === 'success') {
+      showSuccess(data.data);
+    } else if (status === 'failed') {
+      showFailed(data.data);
+    } else {
+      document.getElementById('statusText').textContent = `Status: ${status}... (cek ke-${attempt+1})`;
+      pollStatus(orderId, attempt + 1);
+    }
+  } catch { pollStatus(orderId, attempt + 1); }
+}
+
+function showSuccess(tx) {
+  document.getElementById('mainContent').innerHTML = `
+    <div class="card">
+      <div class="success-wrap">
+        <div class="success-icon">🎉</div>
+        <div class="success-title">Order Berhasil!</div>
+        <div class="success-sub">Top up berhasil diproses secara otomatis</div>
+        ${tx.sn ? `<div class="sn-box"><div style="color:var(--muted);font-size:.75rem;margin-bottom:4px">Serial Number</div>${tx.sn}</div>` : ''}
+        <div style="color:var(--muted);font-size:.8rem;margin-bottom:24px">Order ID: ${tx.trx_ref || '—'}</div>
+        <a href="/dashboard" class="btn-secondary" style="display:block">Lihat Riwayat Transaksi</a>
+        <a href="/" class="btn-primary" style="display:block;margin-top:8px;text-decoration:none;text-align:center;padding:14px;border-radius:14px">Top Up Lagi</a>
+      </div>
+    </div>
+  `;
+}
+
+function showFailed(tx) {
+  document.getElementById('mainContent').innerHTML = `
+    <div class="card" style="border-color:var(--danger)">
+      <div class="success-wrap">
+        <div class="success-icon">❌</div>
+        <div class="success-title" style="color:var(--danger)">Order Gagal</div>
+        <div class="success-sub">Saldo telah dikembalikan ke akun kamu</div>
+        <a href="javascript:history.back()" class="btn-primary" style="display:block;text-decoration:none;text-align:center;">Coba Lagi</a>
+      </div>
+    </div>
+  `;
+  // Refund balance locally
+  user.balance = (user.balance || 0) + price;
+  localStorage.setItem('user', JSON.stringify(user));
+}
+
+init();
+</script>
+</body>
+</html>
